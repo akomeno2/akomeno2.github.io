@@ -1,0 +1,291 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Networking Reality Check</title>
+</head>
+<body>
+<div style="max-width:760px; margin:auto; font-family:sans-serif; color:#1f2430;">
+
+<div style="background:#ffffff; border:1px solid #d8def0; border-radius:12px; padding:16px; margin-bottom:16px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+    <div><b>Networking Reality Check</b></div>
+    <div id="progress-text"><b>Scenario 1 of 10</b></div>
+  </div>
+  <div style="margin-top:12px; background:#eceffd; border-radius:999px; height:10px; overflow:hidden;">
+    <div id="progress-bar" style="height:10px; width:10%; background:#5648b7;"></div>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns:2fr 1fr; gap:16px;">
+  <div>
+    <div id="scenario-box" style="background:#f5f7ff; padding:18px; border-radius:10px; margin-bottom:16px;"></div>
+
+    <label><b>Your Rating (1–10):</b></label><br>
+    <input type="range" id="rating" min="1" max="10" value="5" style="width:100%;">
+    <p id="rating-value" style="margin-top:8px; font-size:20px; font-weight:bold; color:#5648b7;">5</p>
+
+    <button onclick="submitRating()" id="submit-btn" style="padding:10px 16px; background:#5648b7; color:white; border:none; border-radius:6px; cursor:pointer;">
+      Submit Rating
+    </button>
+
+    <button onclick="nextScenario()" id="next-btn" style="padding:10px 16px; background:#ddd; border:none; border-radius:6px; cursor:pointer; display:none; margin-left:10px;">
+      Next
+    </button>
+
+    <div id="feedback" style="margin-top:18px;"></div>
+  </div>
+
+  <div>
+    <div style="background:#ffffff; border:1px solid #d8def0; border-radius:10px; padding:16px; margin-bottom:16px;">
+      <b>Your Score</b>
+      <div id="score-summary" style="margin-top:10px; line-height:1.6;">
+        Accuracy: 0%<br>
+        Close ratings: 0/0<br>
+        Points: 0
+      </div>
+    </div>
+
+    <div style="background:#ffffff; border:1px solid #d8def0; border-radius:10px; padding:16px;">
+      <b>What to look for</b>
+      <div style="margin-top:10px; font-size:14px; line-height:1.6;">
+        Does the behavior build trust?<br>
+        Is it clear and specific?<br>
+        Is it respectful of time and boundaries?<br>
+        Does it feel relational rather than transactional?
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const scenarios = [
+{
+  title: "Scenario 1",
+  text: "At an in-person networking event, Daniel walks around the room, listens to conversations from a distance, checks his phone, and leaves without speaking to anyone.",
+  rating: 2,
+  worked: "He showed up, entered the space, and observed the environment. For someone who feels nervous, that can still be a real first step.",
+  didnt: "He stayed invisible. Because he did not introduce himself, ask a question, or engage with anyone, no real relationship could begin. Checking his phone also signaled disengagement.",
+  improve: "Set a small goal before the event, such as speaking to one or two people. Prepare one simple opener like, ‘What brought you to this event?’ and keep your phone away while you are in the room.",
+  deeper: "This scenario highlights an important truth: attendance is not the same as networking. Simply being present in a room does not create professional visibility. Effective networking requires a small but intentional action that opens the door to connection.",
+  lesson: "Networking starts when you participate, not just when you arrive."
+},
+{
+  title: "Scenario 2",
+  text: "Within the first minute, Aisha says: 'I’m looking for a job as a Virtual Assistant. Do you know anyone hiring?'",
+  rating: 3,
+  worked: "She was honest and direct about what she wants. That kind of clarity can be useful in networking.",
+  didnt: "The problem is timing. She asked for help before building any context, trust, or connection. That makes the interaction feel transactional and places pressure on the other person immediately.",
+  improve: "Start with a short introduction, ask about the other person, and build some rapport first. Later, if the conversation feels natural, you can mention your goals and ask for guidance rather than jumping straight to a favor.",
+  deeper: "Strong networking is not about hiding your goals. It is about revealing them in a way that feels respectful and relational. People are often more willing to help when they understand who you are and do not feel cornered into responding.",
+  lesson: "Clarity helps, but pressure hurts."
+},
+{
+  title: "Scenario 3",
+  text: "Samuel introduces himself, asks what the other person does, and follows up with a thoughtful question.",
+  rating: 9,
+  worked: "He showed curiosity, listened, and invited the other person into a real conversation. His follow-up question helped the interaction feel human rather than performative.",
+  didnt: "There is very little wrong here. The only missing piece is what happens after the conversation, such as staying in touch or following up later.",
+  improve: "Keep using this approach. If the conversation goes well, end by thanking the person and, if appropriate, ask to connect afterward.",
+  deeper: "This is strong because it balances presence and interest. The person is not trying to impress through a speech. Instead, they are building rapport by listening and creating space for the other person to speak.",
+  lesson: "Curiosity is one of the strongest networking skills."
+},
+{
+  title: "Scenario 4",
+  text: "Priya talks for 3 minutes about all her skills without pausing or asking the other person anything.",
+  rating: 4,
+  worked: "She was ready to talk about her experience and likely wanted to communicate her value clearly.",
+  didnt: "The conversation became one-sided. Long explanations can make the other person disengage, especially when there is no invitation for them to respond or connect. Networking works best as a two-way interaction.",
+  improve: "Give a shorter introduction focused on the most relevant point, then ask a question. A good rule is to say enough to create interest, not so much that you take over the interaction.",
+  deeper: "Many people think more detail makes them sound more impressive. In reality, too much detail too early often creates distance. Good networking is not about delivering your full story. It is about opening a conversation that can continue.",
+  lesson: "Be concise enough to leave room for connection."
+},
+{
+  title: "Scenario 5",
+  text: "Kwame gives a polished but memorized introduction and does not adapt to the conversation.",
+  rating: 6,
+  worked: "He prepared in advance, which helped him avoid freezing and ensured he could introduce himself clearly.",
+  didnt: "The interaction felt stiff because he stayed locked into his script even when the conversation moved in a different direction. That reduced warmth and made it harder to build a natural connection.",
+  improve: "Prepare your introduction, but treat it as a starting point rather than a speech. Listen to what the other person says and respond to that instead of repeating your script.",
+  deeper: "Preparation is useful, especially for nervous networkers. But the goal is not to sound rehearsed. The goal is to feel ready enough that you can be present, flexible, and responsive in the moment.",
+  lesson: "Preparation should support presence, not replace it."
+},
+{
+  title: "Scenario 6",
+  text: "Fatima sends: 'I enjoyed your post. I’m training as a VA. Could I ask you 1–2 questions in 10 minutes?'",
+  rating: 10,
+  worked: "The message is respectful, specific, and easy to respond to. It includes context, shows genuine interest, and makes a small, reasonable ask.",
+  didnt: "There is no major weakness here. It is short without being vague, and confident without sounding demanding.",
+  improve: "Keep this structure. If there is no response, a polite follow-up later is appropriate, but avoid repeated pressure.",
+  deeper: "This works because it reduces friction. The other person understands who is reaching out, why, and what is being asked. Strong networking messages often succeed not because they are flashy, but because they are easy to receive and answer.",
+  lesson: "A small, clear ask is often more effective than a big vague one."
+},
+{
+  title: "Scenario 7",
+  text: "Chris sends: 'Hi, I’d love your help. Please let me know.'",
+  rating: 2,
+  worked: "The intention to connect is there, and the message is at least brief.",
+  didnt: "It gives no context, no relationship frame, and no clear request. The other person now has to do extra work to figure out what kind of help is needed, which lowers the chance of a response.",
+  improve: "Introduce yourself, explain why you are reaching out, and include one small specific ask. The clearer your message, the easier it is for someone to say yes.",
+  deeper: "Vagueness often feels safer to the sender, but it creates burden for the receiver. In networking, clarity is a form of respect because it helps the other person understand how to respond.",
+  lesson: "Specificity increases trust and response likelihood."
+},
+{
+  title: "Scenario 8",
+  text: "Lina balances sharing, listening, and asking thoughtful questions in a conversation.",
+  rating: 10,
+  worked: "She created a balanced interaction. She shared enough about herself to be clear, listened actively, and kept the conversation relational rather than self-centered.",
+  didnt: "There is no major issue here. This is a strong example of effective networking behavior.",
+  improve: "End with appreciation and, if appropriate, follow up afterward to keep the connection alive.",
+  deeper: "This is what strong networking often looks like in practice. It is not dramatic. It is balanced. The person is present, warm, clear, and genuinely interested in the other person too.",
+  lesson: "The best networking often feels like a good conversation."
+},
+{
+  title: "Scenario 9",
+  text: "After a great conversation, Ibrahim leaves without following up.",
+  rating: 5,
+  worked: "The interaction itself may have created a positive impression in the moment. That matters.",
+  didnt: "Without follow-through, the connection may fade quickly. Networking becomes more valuable when people can remember each other and continue the relationship later.",
+  improve: "Send a short follow-up message while the conversation is still fresh. Mention something specific you appreciated so the person remembers the interaction too.",
+  deeper: "This is a useful reminder that networking is not only about starting conversations. It is also about sustaining them. A brief, thoughtful follow-up often makes the difference between a pleasant moment and a lasting professional connection.",
+  lesson: "Follow-through turns conversation into relationship."
+},
+{
+  title: "Scenario 10",
+  text: "Nadia sends a thoughtful follow-up referencing a specific conversation and expressing appreciation.",
+  rating: 10,
+  worked: "The follow-up is specific, respectful, and memorable. It reinforces the connection without creating pressure or asking for too much.",
+  didnt: "There is no major weakness here. It models strong professional follow-through.",
+  improve: "Continue building the relationship gradually over time when there is a natural reason to reconnect.",
+  deeper: "This works because it signals care, attention, and professionalism. Referencing the earlier conversation shows that the interaction mattered. Appreciation helps the other person feel respected rather than used.",
+  lesson: "Thoughtful follow-up helps people remember you positively."
+}
+];
+
+let current = 0;
+let totalPoints = 0;
+let closeRatings = 0;
+let completed = 0;
+
+function loadScenario() {
+  document.getElementById("scenario-box").innerHTML =
+    "<b>" + scenarios[current].title + "</b><br><br>" + scenarios[current].text;
+
+  document.getElementById("feedback").innerHTML = "";
+  document.getElementById("next-btn").style.display = "none";
+  document.getElementById("submit-btn").disabled = false;
+  document.getElementById("submit-btn").style.opacity = "1";
+  document.getElementById("rating").disabled = false;
+  document.getElementById("rating").value = 5;
+  document.getElementById("rating-value").innerText = "5";
+  document.getElementById("progress-text").innerHTML = "<b>Scenario " + (current + 1) + " of " + scenarios.length + "</b>";
+  document.getElementById("progress-bar").style.width = (((current + 1) / scenarios.length) * 100) + "%";
+}
+
+document.getElementById("rating").oninput = function() {
+  document.getElementById("rating-value").innerText = this.value;
+};
+
+function submitRating() {
+  const userRating = Number(document.getElementById("rating").value);
+  const correct = scenarios[current].rating;
+  const diff = Math.abs(userRating - correct);
+
+  let points = Math.max(0, 10 - diff);
+  totalPoints += points;
+  completed += 1;
+
+  if (diff <= 2) {
+    closeRatings += 1;
+  }
+
+  let message = "";
+  let boxColor = "#eef4ff";
+
+  if (diff === 0) {
+    message = "<b>Excellent judgment.</b> Your rating matches the expert rating exactly.";
+    boxColor = "#eafaf3";
+  } else if (diff <= 2) {
+    message = "<b>Good judgment.</b> You're close to the expert rating.";
+    boxColor = "#eef4ff";
+  } else if (diff <= 4) {
+    message = "<b>Partly effective judgment.</b> You noticed some signals, but this behavior is stronger or weaker than you rated.";
+    boxColor = "#fff4e6";
+  } else {
+    message = "<b>Reconsider.</b> This behavior is much stronger or weaker than you rated. Look more closely at the relationship-building signals.";
+    boxColor = "#fff1f0";
+  }
+
+  document.getElementById("feedback").innerHTML = `
+    <div style="background:${boxColor}; padding:14px; border-radius:8px; border:1px solid #d8def0;">
+      <p><b>Expert Rating:</b> ${correct}/10</p>
+      <p><b>Your Score for this round:</b> ${points}/10</p>
+      <p>${message}</p>
+      <p><b>What worked:</b><br>${scenarios[current].worked}</p>
+      <p><b>What didn’t work:</b><br>${scenarios[current].didnt}</p>
+      <p><b>How to improve:</b><br>${scenarios[current].improve}</p>
+      <p><b>Deeper feedback:</b><br>${scenarios[current].deeper}</p>
+      <p><b>Key takeaway:</b><br>${scenarios[current].lesson}</p>
+    </div>
+  `;
+
+  document.getElementById("next-btn").style.display = "inline-block";
+  document.getElementById("submit-btn").disabled = true;
+  document.getElementById("submit-btn").style.opacity = "0.6";
+  document.getElementById("rating").disabled = true;
+
+  updateScore();
+}
+
+function updateScore() {
+  const accuracy = completed > 0 ? Math.round((totalPoints / (completed * 10)) * 100) : 0;
+  document.getElementById("score-summary").innerHTML = `
+    Accuracy: ${accuracy}%<br>
+    Close ratings: ${closeRatings}/${completed}<br>
+    Points: ${totalPoints}
+  `;
+}
+
+function nextScenario() {
+  current++;
+
+  if (current >= scenarios.length) {
+    const accuracy = Math.round((totalPoints / (scenarios.length * 10)) * 100);
+    let masteryMessage = "";
+
+    if (accuracy >= 70) {
+      masteryMessage = "<b>Strong work.</b> You are showing solid judgment about effective networking behavior.";
+    } else {
+      masteryMessage = "<b>Keep practicing.</b> Review the feedback patterns again and pay close attention to clarity, respect, and follow-through.";
+    }
+
+    document.getElementById("scenario-box").innerHTML =
+      "<b>Simulation Complete</b><br><br>You’ve completed all scenarios. Reflect on what patterns you noticed in effective networking behavior.";
+
+    document.getElementById("feedback").innerHTML = `
+      <div style="background:#f3f0ff; padding:14px; border-radius:8px; border:1px solid #d8def0;">
+        <p><b>Final Accuracy:</b> ${accuracy}%</p>
+        <p><b>Close Ratings:</b> ${closeRatings}/${scenarios.length}</p>
+        <p><b>Total Points:</b> ${totalPoints}/${scenarios.length * 10}</p>
+        <p>${masteryMessage}</p>
+        <p><b>Reflection Question:</b><br>What did you notice about the difference between transactional networking and relationship-building networking?</p>
+      </div>
+    `;
+
+    document.getElementById("next-btn").style.display = "none";
+    document.getElementById("submit-btn").style.display = "none";
+    document.getElementById("rating").style.display = "none";
+    document.getElementById("rating-value").style.display = "none";
+    return;
+  }
+
+  loadScenario();
+}
+
+loadScenario();
+updateScore();
+</script>
+</body>
+</html>

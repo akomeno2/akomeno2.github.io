@@ -3,289 +3,912 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Networking Reality Check</title>
-</head>
-<body>
-<div style="max-width:760px; margin:auto; font-family:sans-serif; color:#1f2430;">
-
-<div style="background:#ffffff; border:1px solid #d8def0; border-radius:12px; padding:16px; margin-bottom:16px;">
-  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-    <div><b>Networking Reality Check</b></div>
-    <div id="progress-text"><b>Scenario 1 of 10</b></div>
-  </div>
-  <div style="margin-top:12px; background:#eceffd; border-radius:999px; height:10px; overflow:hidden;">
-    <div id="progress-bar" style="height:10px; width:10%; background:#5648b7;"></div>
-  </div>
-</div>
-
-<div style="display:grid; grid-template-columns:2fr 1fr; gap:16px;">
-  <div>
-    <div id="scenario-box" style="background:#f5f7ff; padding:18px; border-radius:10px; margin-bottom:16px;"></div>
-
-    <label><b>Your Rating (1–10):</b></label><br>
-    <input type="range" id="rating" min="1" max="10" value="5" style="width:100%;">
-    <p id="rating-value" style="margin-top:8px; font-size:20px; font-weight:bold; color:#5648b7;">5</p>
-
-    <button onclick="submitRating()" id="submit-btn" style="padding:10px 16px; background:#5648b7; color:white; border:none; border-radius:6px; cursor:pointer;">
-      Submit Rating
-    </button>
-
-    <button onclick="nextScenario()" id="next-btn" style="padding:10px 16px; background:#ddd; border:none; border-radius:6px; cursor:pointer; display:none; margin-left:10px;">
-      Next
-    </button>
-
-    <div id="feedback" style="margin-top:18px;"></div>
-  </div>
-
-  <div>
-    <div style="background:#ffffff; border:1px solid #d8def0; border-radius:10px; padding:16px; margin-bottom:16px;">
-      <b>Your Score</b>
-      <div id="score-summary" style="margin-top:10px; line-height:1.6;">
-        Accuracy: 0%<br>
-        Close ratings: 0/0<br>
-        Points: 0
-      </div>
-    </div>
-
-    <div style="background:#ffffff; border:1px solid #d8def0; border-radius:10px; padding:16px;">
-      <b>What to look for</b>
-      <div style="margin-top:10px; font-size:14px; line-height:1.6;">
-        Does the behavior build trust?<br>
-        Is it clear and specific?<br>
-        Is it respectful of time and boundaries?<br>
-        Does it feel relational rather than transactional?
-      </div>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<script>
-const scenarios = [
-{
-  title: "Scenario 1",
-  text: "At an in-person networking event, Daniel walks around the room, listens to conversations from a distance, checks his phone, and leaves without speaking to anyone.",
-  rating: 2,
-  worked: "He showed up, entered the space, and observed the environment. For someone who feels nervous, that can still be a real first step.",
-  didnt: "He stayed invisible. Because he did not introduce himself, ask a question, or engage with anyone, no real relationship could begin. Checking his phone also signaled disengagement.",
-  improve: "Set a small goal before the event, such as speaking to one or two people. Prepare one simple opener like, ‘What brought you to this event?’ and keep your phone away while you are in the room.",
-  deeper: "This scenario highlights an important truth: attendance is not the same as networking. Simply being present in a room does not create professional visibility. Effective networking requires a small but intentional action that opens the door to connection.",
-  lesson: "Networking starts when you participate, not just when you arrive."
-},
-{
-  title: "Scenario 2",
-  text: "Within the first minute, Aisha says: 'I’m looking for a job as a Virtual Assistant. Do you know anyone hiring?'",
-  rating: 3,
-  worked: "She was honest and direct about what she wants. That kind of clarity can be useful in networking.",
-  didnt: "The problem is timing. She asked for help before building any context, trust, or connection. That makes the interaction feel transactional and places pressure on the other person immediately.",
-  improve: "Start with a short introduction, ask about the other person, and build some rapport first. Later, if the conversation feels natural, you can mention your goals and ask for guidance rather than jumping straight to a favor.",
-  deeper: "Strong networking is not about hiding your goals. It is about revealing them in a way that feels respectful and relational. People are often more willing to help when they understand who you are and do not feel cornered into responding.",
-  lesson: "Clarity helps, but pressure hurts."
-},
-{
-  title: "Scenario 3",
-  text: "Samuel introduces himself, asks what the other person does, and follows up with a thoughtful question.",
-  rating: 9,
-  worked: "He showed curiosity, listened, and invited the other person into a real conversation. His follow-up question helped the interaction feel human rather than performative.",
-  didnt: "There is very little wrong here. The only missing piece is what happens after the conversation, such as staying in touch or following up later.",
-  improve: "Keep using this approach. If the conversation goes well, end by thanking the person and, if appropriate, ask to connect afterward.",
-  deeper: "This is strong because it balances presence and interest. The person is not trying to impress through a speech. Instead, they are building rapport by listening and creating space for the other person to speak.",
-  lesson: "Curiosity is one of the strongest networking skills."
-},
-{
-  title: "Scenario 4",
-  text: "Priya talks for 3 minutes about all her skills without pausing or asking the other person anything.",
-  rating: 4,
-  worked: "She was ready to talk about her experience and likely wanted to communicate her value clearly.",
-  didnt: "The conversation became one-sided. Long explanations can make the other person disengage, especially when there is no invitation for them to respond or connect. Networking works best as a two-way interaction.",
-  improve: "Give a shorter introduction focused on the most relevant point, then ask a question. A good rule is to say enough to create interest, not so much that you take over the interaction.",
-  deeper: "Many people think more detail makes them sound more impressive. In reality, too much detail too early often creates distance. Good networking is not about delivering your full story. It is about opening a conversation that can continue.",
-  lesson: "Be concise enough to leave room for connection."
-},
-{
-  title: "Scenario 5",
-  text: "Kwame gives a polished but memorized introduction and does not adapt to the conversation.",
-  rating: 6,
-  worked: "He prepared in advance, which helped him avoid freezing and ensured he could introduce himself clearly.",
-  didnt: "The interaction felt stiff because he stayed locked into his script even when the conversation moved in a different direction. That reduced warmth and made it harder to build a natural connection.",
-  improve: "Prepare your introduction, but treat it as a starting point rather than a speech. Listen to what the other person says and respond to that instead of repeating your script.",
-  deeper: "Preparation is useful, especially for nervous networkers. But the goal is not to sound rehearsed. The goal is to feel ready enough that you can be present, flexible, and responsive in the moment.",
-  lesson: "Preparation should support presence, not replace it."
-},
-{
-  title: "Scenario 6",
-  text: "Fatima sends: 'I enjoyed your post. I’m training as a VA. Could I ask you 1–2 questions in 10 minutes?'",
-  rating: 10,
-  worked: "The message is respectful, specific, and easy to respond to. It includes context, shows genuine interest, and makes a small, reasonable ask.",
-  didnt: "There is no major weakness here. It is short without being vague, and confident without sounding demanding.",
-  improve: "Keep this structure. If there is no response, a polite follow-up later is appropriate, but avoid repeated pressure.",
-  deeper: "This works because it reduces friction. The other person understands who is reaching out, why, and what is being asked. Strong networking messages often succeed not because they are flashy, but because they are easy to receive and answer.",
-  lesson: "A small, clear ask is often more effective than a big vague one."
-},
-{
-  title: "Scenario 7",
-  text: "Chris sends: 'Hi, I’d love your help. Please let me know.'",
-  rating: 2,
-  worked: "The intention to connect is there, and the message is at least brief.",
-  didnt: "It gives no context, no relationship frame, and no clear request. The other person now has to do extra work to figure out what kind of help is needed, which lowers the chance of a response.",
-  improve: "Introduce yourself, explain why you are reaching out, and include one small specific ask. The clearer your message, the easier it is for someone to say yes.",
-  deeper: "Vagueness often feels safer to the sender, but it creates burden for the receiver. In networking, clarity is a form of respect because it helps the other person understand how to respond.",
-  lesson: "Specificity increases trust and response likelihood."
-},
-{
-  title: "Scenario 8",
-  text: "Lina balances sharing, listening, and asking thoughtful questions in a conversation.",
-  rating: 10,
-  worked: "She created a balanced interaction. She shared enough about herself to be clear, listened actively, and kept the conversation relational rather than self-centered.",
-  didnt: "There is no major issue here. This is a strong example of effective networking behavior.",
-  improve: "End with appreciation and, if appropriate, follow up afterward to keep the connection alive.",
-  deeper: "This is what strong networking often looks like in practice. It is not dramatic. It is balanced. The person is present, warm, clear, and genuinely interested in the other person too.",
-  lesson: "The best networking often feels like a good conversation."
-},
-{
-  title: "Scenario 9",
-  text: "After a great conversation, Ibrahim leaves without following up.",
-  rating: 5,
-  worked: "The interaction itself may have created a positive impression in the moment. That matters.",
-  didnt: "Without follow-through, the connection may fade quickly. Networking becomes more valuable when people can remember each other and continue the relationship later.",
-  improve: "Send a short follow-up message while the conversation is still fresh. Mention something specific you appreciated so the person remembers the interaction too.",
-  deeper: "This is a useful reminder that networking is not only about starting conversations. It is also about sustaining them. A brief, thoughtful follow-up often makes the difference between a pleasant moment and a lasting professional connection.",
-  lesson: "Follow-through turns conversation into relationship."
-},
-{
-  title: "Scenario 10",
-  text: "Nadia sends a thoughtful follow-up referencing a specific conversation and expressing appreciation.",
-  rating: 10,
-  worked: "The follow-up is specific, respectful, and memorable. It reinforces the connection without creating pressure or asking for too much.",
-  didnt: "There is no major weakness here. It models strong professional follow-through.",
-  improve: "Continue building the relationship gradually over time when there is a natural reason to reconnect.",
-  deeper: "This works because it signals care, attention, and professionalism. Referencing the earlier conversation shows that the interaction mattered. Appreciation helps the other person feel respected rather than used.",
-  lesson: "Thoughtful follow-up helps people remember you positively."
-}
-];
-
-let current = 0;
-let totalPoints = 0;
-let closeRatings = 0;
-let completed = 0;
-
-function loadScenario() {
-  document.getElementById("scenario-box").innerHTML =
-    "<b>" + scenarios[current].title + "</b><br><br>" + scenarios[current].text;
-
-  document.getElementById("feedback").innerHTML = "";
-  document.getElementById("next-btn").style.display = "none";
-  document.getElementById("submit-btn").disabled = false;
-  document.getElementById("submit-btn").style.opacity = "1";
-  document.getElementById("rating").disabled = false;
-  document.getElementById("rating").value = 5;
-  document.getElementById("rating-value").innerText = "5";
-  document.getElementById("progress-text").innerHTML = "<b>Scenario " + (current + 1) + " of " + scenarios.length + "</b>";
-  document.getElementById("progress-bar").style.width = (((current + 1) / scenarios.length) * 100) + "%";
-}
-
-document.getElementById("rating").oninput = function() {
-  document.getElementById("rating-value").innerText = this.value;
-};
-
-function submitRating() {
-  const userRating = Number(document.getElementById("rating").value);
-  const correct = scenarios[current].rating;
-  const diff = Math.abs(userRating - correct);
-
-  let points = Math.max(0, 10 - diff);
-  totalPoints += points;
-  completed += 1;
-
-  if (diff <= 2) {
-    closeRatings += 1;
-  }
-
-  let message = "";
-  let boxColor = "#eef4ff";
-
-  if (diff === 0) {
-    message = "<b>Excellent judgment.</b> Your rating matches the expert rating exactly.";
-    boxColor = "#eafaf3";
-  } else if (diff <= 2) {
-    message = "<b>Good judgment.</b> You're close to the expert rating.";
-    boxColor = "#eef4ff";
-  } else if (diff <= 4) {
-    message = "<b>Partly effective judgment.</b> You noticed some signals, but this behavior is stronger or weaker than you rated.";
-    boxColor = "#fff4e6";
-  } else {
-    message = "<b>Reconsider.</b> This behavior is much stronger or weaker than you rated. Look more closely at the relationship-building signals.";
-    boxColor = "#fff1f0";
-  }
-
-  document.getElementById("feedback").innerHTML = `
-    <div style="background:${boxColor}; padding:14px; border-radius:8px; border:1px solid #d8def0;">
-      <p><b>Expert Rating:</b> ${correct}/10</p>
-      <p><b>Your Score for this round:</b> ${points}/10</p>
-      <p>${message}</p>
-      <p><b>What worked:</b><br>${scenarios[current].worked}</p>
-      <p><b>What didn’t work:</b><br>${scenarios[current].didnt}</p>
-      <p><b>How to improve:</b><br>${scenarios[current].improve}</p>
-      <p><b>Deeper feedback:</b><br>${scenarios[current].deeper}</p>
-      <p><b>Key takeaway:</b><br>${scenarios[current].lesson}</p>
-    </div>
-  `;
-
-  document.getElementById("next-btn").style.display = "inline-block";
-  document.getElementById("submit-btn").disabled = true;
-  document.getElementById("submit-btn").style.opacity = "0.6";
-  document.getElementById("rating").disabled = true;
-
-  updateScore();
-}
-
-function updateScore() {
-  const accuracy = completed > 0 ? Math.round((totalPoints / (completed * 10)) * 100) : 0;
-  document.getElementById("score-summary").innerHTML = `
-    Accuracy: ${accuracy}%<br>
-    Close ratings: ${closeRatings}/${completed}<br>
-    Points: ${totalPoints}
-  `;
-}
-
-function nextScenario() {
-  current++;
-
-  if (current >= scenarios.length) {
-    const accuracy = Math.round((totalPoints / (scenarios.length * 10)) * 100);
-    let masteryMessage = "";
-
-    if (accuracy >= 70) {
-      masteryMessage = "<b>Strong work.</b> You are showing solid judgment about effective networking behavior.";
-    } else {
-      masteryMessage = "<b>Keep practicing.</b> Review the feedback patterns again and pay close attention to clarity, respect, and follow-through.";
+  <style>
+    :root {
+      --purple: #5648b7;
+      --purple-light: #f3f0ff;
+      --blue-light: #eef4ff;
+      --green-light: #eafaf3;
+      --orange-light: #fff4e6;
+      --red-light: #fff1f0;
+      --text: #1f2430;
+      --muted: #5f6b7a;
+      --border: #d9deea;
+      --white: #ffffff;
+      --shadow: 0 10px 30px rgba(28, 39, 94, 0.08);
+      --radius: 16px;
     }
 
-    document.getElementById("scenario-box").innerHTML =
-      "<b>Simulation Complete</b><br><br>You’ve completed all scenarios. Reflect on what patterns you noticed in effective networking behavior.";
+    * { box-sizing: border-box; }
 
-    document.getElementById("feedback").innerHTML = `
-      <div style="background:#f3f0ff; padding:14px; border-radius:8px; border:1px solid #d8def0;">
-        <p><b>Final Accuracy:</b> ${accuracy}%</p>
-        <p><b>Close Ratings:</b> ${closeRatings}/${scenarios.length}</p>
-        <p><b>Total Points:</b> ${totalPoints}/${scenarios.length * 10}</p>
-        <p>${masteryMessage}</p>
-        <p><b>Reflection Question:</b><br>What did you notice about the difference between transactional networking and relationship-building networking?</p>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f7f8fc 0%, #eef2ff 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    .hero {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      border: 1px solid rgba(86, 72, 183, 0.08);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      color: var(--purple);
+    }
+
+    .hero p {
+      margin: 8px 0;
+      color: var(--muted);
+      max-width: 850px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      background: var(--purple-light);
+      color: var(--purple);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 22px;
+    }
+
+    .scenario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .scenario-badge {
+      display: inline-block;
+      background: var(--purple-light);
+      color: var(--purple);
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 0.9rem;
+    }
+
+    .progress-text {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #eceef6;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0 18px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #5648b7 0%, #7a6cf0 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .scenario-title {
+      font-size: 1.25rem;
+      margin: 0 0 10px;
+    }
+
+    .scenario-box {
+      background: var(--blue-light);
+      border-left: 6px solid var(--purple);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .scenario-box p {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .instructions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .mini-card {
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      min-height: 100%;
+    }
+
+    .mini-card:nth-child(1) { background: var(--purple-light); }
+    .mini-card:nth-child(2) { background: var(--green-light); }
+    .mini-card:nth-child(3) { background: var(--orange-light); }
+
+    .mini-card h4 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+
+    .mini-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .rating-wrap {
+      background: #fafbff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .rating-label-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .rating-label-row h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .rating-value {
+      font-size: 1.8rem;
+      color: var(--purple);
+      font-weight: 800;
+      min-width: 52px;
+      text-align: right;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--purple);
+      cursor: pointer;
+    }
+
+    .scale-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 8px;
+      gap: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 110px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      color: var(--text);
+      background: var(--white);
+    }
+
+    textarea:focus, input:focus, button:focus {
+      outline: 3px solid rgba(86, 72, 183, 0.16);
+      outline-offset: 1px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.05s ease, opacity 0.2s ease;
+    }
+
+    button:hover { opacity: 0.96; }
+    button:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--purple);
+      color: var(--white);
+    }
+
+    .btn-secondary {
+      background: #edf0f7;
+      color: var(--text);
+    }
+
+    .feedback {
+      margin-top: 18px;
+      border-radius: 14px;
+      padding: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .feedback strong { color: var(--text); }
+
+    .feedback.good { background: var(--green-light); }
+    .feedback.mid { background: var(--orange-light); }
+    .feedback.low { background: var(--red-light); }
+
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .feedback-block {
+      background: rgba(255,255,255,0.65);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .feedback-block h4 {
+      margin: 0 0 8px;
+      font-size: 0.98rem;
+    }
+
+    .feedback-block p {
+      margin: 0;
+      color: var(--text);
+    }
+
+    .sidebar .section + .section {
+      border-top: 1px solid var(--border);
+    }
+
+    .score-ring {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      margin: 8px auto 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: conic-gradient(var(--purple) 0deg, var(--purple) 0deg, #eceef6 0deg);
+      position: relative;
+    }
+
+    .score-ring::after {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      background: var(--white);
+    }
+
+    .score-ring span {
+      position: relative;
+      z-index: 1;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--purple);
+    }
+
+    .stat-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .stat {
+      background: #fafbff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .stat-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .principles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .principle-tag {
+      background: var(--purple-light);
+      color: var(--purple);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .results h2, .results h3 {
+      margin-top: 0;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .result-card {
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      background: #fafbff;
+    }
+
+    .review-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .review-item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--white);
+      overflow: hidden;
+    }
+
+    .review-head {
+      padding: 14px 16px;
+      background: #fafbff;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .review-body {
+      padding: 16px;
+    }
+
+    .review-score {
+      font-weight: 800;
+      color: var(--purple);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 14px 0 6px;
+      color: var(--muted);
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 860px) {
+      .layout,
+      .results-grid,
+      .feedback-grid,
+      .instructions {
+        grid-template-columns: 1fr;
+      }
+
+      .app { padding: 16px; }
+      .hero, .section { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="hero">
+      <h1>Networking Reality Check</h1>
+      <p>Review how an aspiring Virtual Assistant behaves in real networking situations. Your job is to rate each behavior on a scale of <strong>1 to 10</strong>, where <strong>1</strong> means completely ineffective and <strong>10</strong> means excellent.</p>
+      <p>This simulation is not about being extroverted or perfect. It is about noticing what helps build trust, clarity, respect, and real professional relationships.</p>
+      <div class="pill-row">
+        <div class="pill">10 scenarios</div>
+        <div class="pill">Rate behavior</div>
+        <div class="pill">Compare with expert judgment</div>
+        <div class="pill">Reflect and improve</div>
       </div>
-    `;
+    </div>
 
-    document.getElementById("next-btn").style.display = "none";
-    document.getElementById("submit-btn").style.display = "none";
-    document.getElementById("rating").style.display = "none";
-    document.getElementById("rating-value").style.display = "none";
-    return;
-  }
+    <div id="gameView" class="layout">
+      <div class="card main-card">
+        <div class="section">
+          <div class="scenario-header">
+            <span class="scenario-badge" id="scenarioBadge">Scenario 1</span>
+            <span class="progress-text" id="progressText">1 of 10</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
 
-  loadScenario();
-}
+          <h2 class="scenario-title" id="scenarioTitle">Loading...</h2>
 
-loadScenario();
-updateScore();
-</script>
+          <div class="scenario-box">
+            <p id="scenarioText"></p>
+          </div>
+
+          <div class="instructions">
+            <div class="mini-card">
+              <h4>Read carefully</h4>
+              <p>Pay attention to tone, timing, clarity, and how the other person is likely to feel.</p>
+            </div>
+            <div class="mini-card">
+              <h4>Rate the behavior</h4>
+              <p>Use the scale to judge how effective the networking behavior is overall.</p>
+            </div>
+            <div class="mini-card">
+              <h4>Reflect briefly</h4>
+              <p>Explain what influenced your score before seeing the expert feedback.</p>
+            </div>
+          </div>
+
+          <div class="rating-wrap">
+            <div class="rating-label-row">
+              <h3>Your Rating</h3>
+              <div class="rating-value" id="ratingValue">5</div>
+            </div>
+            <input type="range" id="ratingSlider" min="1" max="10" value="5" />
+            <div class="scale-row">
+              <span>1 = Completely ineffective</span>
+              <span>10 = Excellent</span>
+            </div>
+          </div>
+
+          <label for="reasonBox"><strong>What made you choose this score?</strong></label>
+          <textarea id="reasonBox" placeholder="Write 1–3 sentences explaining your judgment."></textarea>
+
+          <div class="btn-row">
+            <button class="btn-primary" id="submitBtn">Submit Rating</button>
+            <button class="btn-secondary hidden" id="nextBtn">Next Scenario</button>
+          </div>
+
+          <div id="feedbackBox" class="hidden"></div>
+        </div>
+      </div>
+
+      <div class="card sidebar">
+        <div class="section">
+          <h3 style="margin-top:0;">Your Progress</h3>
+          <div class="score-ring" id="scoreRing"><span id="scoreRingText">0%</span></div>
+          <div class="stat-list">
+            <div class="stat">
+              <span class="stat-label">Scenarios completed</span>
+              <div class="stat-value"><span id="doneCount">0</span> / 10</div>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Average accuracy</span>
+              <div class="stat-value" id="avgAccuracy">0%</div>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Current streak</span>
+              <div class="stat-value" id="streakValue">0 close ratings</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 style="margin-top:0;">What strong networking looks like</h3>
+          <div class="principles">
+            <span class="principle-tag">Be clear</span>
+            <span class="principle-tag">Be respectful</span>
+            <span class="principle-tag">Be human</span>
+            <span class="principle-tag">Be specific</span>
+            <span class="principle-tag">Be reciprocal</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 style="margin-top:0;">Before you rate</h3>
+          <p style="margin:0; color:var(--muted);">Ask yourself: Does this behavior create trust? Is it respectful of the other person’s time? Is the person clear, human, and specific? Does the interaction feel pressured or relational?</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultsView" class="card results hidden">
+      <div class="section">
+        <h2>Simulation Complete</h2>
+        <p>You have finished all 10 scenarios. Review your performance below and look for patterns in how you judged effective networking behavior.</p>
+
+        <div class="results-grid">
+          <div class="result-card" style="background: var(--purple-light);">
+            <h3>Overall Accuracy</h3>
+            <p style="font-size:2rem; font-weight:800; margin:6px 0; color:var(--purple);" id="finalAccuracy">0%</p>
+            <p style="margin:0; color:var(--muted);">This score reflects how close your ratings were to the expert ratings across all scenarios.</p>
+          </div>
+          <div class="result-card" style="background: var(--green-light);">
+            <h3>Close Ratings</h3>
+            <p style="font-size:2rem; font-weight:800; margin:6px 0;" id="finalCloseCount">0 / 10</p>
+            <p style="margin:0; color:var(--muted);">A close rating means your score was within 2 points of the expert judgment.</p>
+          </div>
+        </div>
+
+        <div class="result-card" style="background: var(--orange-light); margin-bottom:16px;">
+          <h3>Reflection Prompt</h3>
+          <p style="margin-bottom:10px;">What patterns do you notice in effective networking? What will you do differently in your own networking practice?</p>
+          <textarea id="finalReflection" placeholder="Write your reflection here."></textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-primary" id="reviewToggleBtn">Show Scenario Review</button>
+          <button class="btn-secondary" id="restartBtn">Restart Simulation</button>
+        </div>
+
+        <div id="reviewSection" class="hidden">
+          <div class="review-list" id="reviewList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const scenarios = [
+      {
+        title: "The Silent Attendee",
+        text: "At an in-person networking event, Daniel walks around the room, listens to a few conversations from a distance, and checks his phone frequently. He does not introduce himself to anyone and leaves after 30 minutes.",
+        expert: 2,
+        whatWorked: "He showed up and observed the environment, which is a small first step.",
+        whatDidnt: "He created no real opportunity for connection, visibility, or relationship-building.",
+        improve: "Introduce yourself to at least one person, ask a simple question, and stay engaged instead of retreating into your phone.",
+        principle: "Be human and visible."
+      },
+      {
+        title: "The Pressure Pitch",
+        text: "Within the first minute of meeting someone, Aisha says: ‘I’m looking for a job as a Virtual Assistant. Do you know anyone hiring right now?’",
+        expert: 3,
+        whatWorked: "She was direct about her goal, which shows some clarity.",
+        whatDidnt: "The interaction jumps straight to a favor without context or connection. It feels transactional and creates pressure.",
+        improve: "Start with a brief introduction, ask about the other person, and build some rapport before making any request.",
+        principle: "Be respectful before you ask."
+      },
+      {
+        title: "The Curious Connector",
+        text: "Samuel introduces himself briefly, asks the other person what they do, listens attentively, and follows up with: ‘What do you enjoy most about your work?’",
+        expert: 9,
+        whatWorked: "He is curious, warm, and focused on building a genuine connection.",
+        whatDidnt: "There is very little wrong here. The only thing missing is a follow-up if the conversation goes well.",
+        improve: "Keep the same approach and, if appropriate, end by asking to stay in touch.",
+        principle: "Curiosity builds connection."
+      },
+      {
+        title: "The Over-Explainer",
+        text: "When asked what she does, Priya speaks for nearly 3 minutes, listing all her skills, tools, and experiences without pausing or asking the other person anything.",
+        expert: 4,
+        whatWorked: "She was ready to talk about herself and likely wanted to communicate value.",
+        whatDidnt: "The response is too long, one-sided, and hard to engage with. It leaves no room for mutual conversation.",
+        improve: "Share a shorter introduction, then ask a question or invite the other person into the conversation.",
+        principle: "Be clear, not overwhelming."
+      },
+      {
+        title: "The Prepared but Rigid Intro",
+        text: "Kwame delivers a well-prepared introduction about himself, but it sounds memorized. When the conversation shifts, he continues repeating parts of his prepared speech instead of adapting.",
+        expert: 6,
+        whatWorked: "He came prepared and communicated some clear information about himself.",
+        whatDidnt: "The interaction feels stiff because he is not responding naturally to the flow of the conversation.",
+        improve: "Use your introduction as a starting point, then adjust based on what the other person says.",
+        principle: "Preparation helps, but responsiveness matters too."
+      },
+      {
+        title: "The Specific and Respectful Ask",
+        text: "Fatima sends a message on LinkedIn: ‘Hello, I enjoyed your post on remote work systems. I’m training as a Virtual Assistant and found your perspective helpful. If you’re open to it, I’d appreciate 10 minutes to ask one or two questions about getting started.’",
+        expert: 10,
+        whatWorked: "The message is specific, respectful, concise, and easy to respond to.",
+        whatDidnt: "There is almost nothing ineffective here. It balances warmth with a reasonable ask.",
+        improve: "This is already strong. If needed, follow up once politely after some time.",
+        principle: "Clear and specific asks are easier to answer."
+      },
+      {
+        title: "The Vague Message",
+        text: "Chris sends a message: ‘Hi, I’d love your help. Please let me know.’",
+        expert: 2,
+        whatWorked: "The intention to reach out is there.",
+        whatDidnt: "The message gives no context, no specific request, and creates work for the other person to figure out what is needed.",
+        improve: "Introduce yourself, explain why you are reaching out, and make one clear and reasonable ask.",
+        principle: "Specificity shows respect."
+      },
+      {
+        title: "The Balanced Conversation",
+        text: "At an event, Lina introduces herself, shares what she is learning, asks a few thoughtful questions, and keeps her responses concise. She listens actively and allows space for the other person to speak.",
+        expert: 10,
+        whatWorked: "This is balanced, respectful, clear, and genuinely relational.",
+        whatDidnt: "There is no major issue here. This is a strong example of effective networking.",
+        improve: "End with appreciation and, if appropriate, stay in touch.",
+        principle: "Strong networking is balanced and human."
+      },
+      {
+        title: "The No Follow-Up",
+        text: "After a meaningful conversation at an event, Ibrahim leaves without asking to stay in touch or sending any follow-up message.",
+        expert: 5,
+        whatWorked: "The conversation itself may have gone well and created a good impression in the moment.",
+        whatDidnt: "Without follow-through, the relationship is less likely to continue or turn into future opportunity.",
+        improve: "Send a short thank-you message or request to stay in touch while the conversation is still fresh.",
+        principle: "Reciprocity includes follow-through."
+      },
+      {
+        title: "The Thoughtful Follow-Up",
+        text: "After an event, Nadia sends a message: ‘Hi, it was great speaking with you about remote client management. I especially appreciated your advice on communication systems. I’ll explore that further. Thank you again for your time.’",
+        expert: 10,
+        whatWorked: "The follow-up is specific, appreciative, and reinforces the connection without pressure.",
+        whatDidnt: "There is no major weakness here. It is respectful and memorable.",
+        improve: "Continue building the relationship over time when there is a natural reason to reconnect.",
+        principle: "Appreciation strengthens relationships."
+      }
+    ];
+
+    const state = {
+      current: 0,
+      answers: [],
+      reviewOpen: false
+    };
+
+    const el = {
+      gameView: document.getElementById('gameView'),
+      resultsView: document.getElementById('resultsView'),
+      scenarioBadge: document.getElementById('scenarioBadge'),
+      progressText: document.getElementById('progressText'),
+      progressFill: document.getElementById('progressFill'),
+      scenarioTitle: document.getElementById('scenarioTitle'),
+      scenarioText: document.getElementById('scenarioText'),
+      ratingSlider: document.getElementById('ratingSlider'),
+      ratingValue: document.getElementById('ratingValue'),
+      reasonBox: document.getElementById('reasonBox'),
+      submitBtn: document.getElementById('submitBtn'),
+      nextBtn: document.getElementById('nextBtn'),
+      feedbackBox: document.getElementById('feedbackBox'),
+      doneCount: document.getElementById('doneCount'),
+      avgAccuracy: document.getElementById('avgAccuracy'),
+      streakValue: document.getElementById('streakValue'),
+      scoreRing: document.getElementById('scoreRing'),
+      scoreRingText: document.getElementById('scoreRingText'),
+      finalAccuracy: document.getElementById('finalAccuracy'),
+      finalCloseCount: document.getElementById('finalCloseCount'),
+      reviewToggleBtn: document.getElementById('reviewToggleBtn'),
+      restartBtn: document.getElementById('restartBtn'),
+      reviewSection: document.getElementById('reviewSection'),
+      reviewList: document.getElementById('reviewList')
+    };
+
+    function clamp(num, min, max) {
+      return Math.min(Math.max(num, min), max);
+    }
+
+    function calculateAccuracy(user, expert) {
+      const diff = Math.abs(user - expert);
+      const accuracy = Math.round(((9 - diff) / 9) * 100);
+      return clamp(accuracy, 0, 100);
+    }
+
+    function feedbackClass(diff) {
+      if (diff <= 1) return 'good';
+      if (diff <= 3) return 'mid';
+      return 'low';
+    }
+
+    function feedbackMessage(diff) {
+      if (diff === 0) return 'Excellent judgment. Your rating matches the expert rating exactly.';
+      if (diff <= 1) return 'Strong judgment. You were very close to the expert rating.';
+      if (diff <= 2) return 'Good judgment. You noticed many of the right signals.';
+      if (diff <= 3) return 'Reasonable attempt. Some signals were right, but the effectiveness level needs refining.';
+      return 'Reconsider the interaction more closely. The behavior is either much stronger or much weaker than you judged.';
+    }
+
+    function renderScenario() {
+      const scenario = scenarios[state.current];
+      const progressPercent = (state.current / scenarios.length) * 100;
+
+      el.scenarioBadge.textContent = `Scenario ${state.current + 1}`;
+      el.progressText.textContent = `${state.current + 1} of ${scenarios.length}`;
+      el.progressFill.style.width = `${progressPercent}%`;
+      el.scenarioTitle.textContent = scenario.title;
+      el.scenarioText.textContent = scenario.text;
+      el.ratingSlider.value = 5;
+      el.ratingValue.textContent = '5';
+      el.reasonBox.value = '';
+      el.reasonBox.disabled = false;
+      el.ratingSlider.disabled = false;
+      el.submitBtn.disabled = false;
+      el.submitBtn.style.opacity = '1';
+      el.nextBtn.classList.add('hidden');
+      el.feedbackBox.classList.add('hidden');
+      el.feedbackBox.innerHTML = '';
+      updateSidebar();
+    }
+
+    function updateSidebar() {
+      const done = state.answers.length;
+      const avg = done
+        ? Math.round(state.answers.reduce((sum, item) => sum + item.accuracy, 0) / done)
+        : 0;
+
+      let streak = 0;
+      for (let i = state.answers.length - 1; i >= 0; i--) {
+        if (Math.abs(state.answers[i].user - state.answers[i].expert) <= 2) streak++;
+        else break;
+      }
+
+      el.doneCount.textContent = done;
+      el.avgAccuracy.textContent = `${avg}%`;
+      el.streakValue.textContent = `${streak} close rating${streak === 1 ? '' : 's'}`;
+      el.scoreRingText.textContent = `${avg}%`;
+      const degrees = Math.round((avg / 100) * 360);
+      el.scoreRing.style.background = `conic-gradient(var(--purple) 0deg, var(--purple) ${degrees}deg, #eceef6 ${degrees}deg)`;
+    }
+
+    function submitRating() {
+      const scenario = scenarios[state.current];
+      const user = Number(el.ratingSlider.value);
+      const reason = el.reasonBox.value.trim();
+      const expert = scenario.expert;
+      const diff = Math.abs(user - expert);
+      const accuracy = calculateAccuracy(user, expert);
+
+      const answer = {
+        index: state.current,
+        title: scenario.title,
+        text: scenario.text,
+        user,
+        expert,
+        reason,
+        accuracy,
+        diff,
+        scenario
+      };
+
+      state.answers.push(answer);
+
+      const boxClass = feedbackClass(diff);
+      el.feedbackBox.className = `feedback ${boxClass}`;
+      el.feedbackBox.innerHTML = `
+        <p><strong>Expert Rating:</strong> ${expert}/10</p>
+        <p><strong>Your Accuracy:</strong> ${accuracy}%</p>
+        <p style="margin-top:8px;">${feedbackMessage(diff)}</p>
+        <div class="feedback-grid">
+          <div class="feedback-block">
+            <h4>What worked</h4>
+            <p>${scenario.whatWorked}</p>
+          </div>
+          <div class="feedback-block">
+            <h4>What did not work</h4>
+            <p>${scenario.whatDidnt}</p>
+          </div>
+          <div class="feedback-block">
+            <h4>How to improve</h4>
+            <p>${scenario.improve}</p>
+          </div>
+          <div class="feedback-block">
+            <h4>Key principle</h4>
+            <p>${scenario.principle}</p>
+          </div>
+        </div>
+      `;
+      el.feedbackBox.classList.remove('hidden');
+
+      el.reasonBox.disabled = true;
+      el.ratingSlider.disabled = true;
+      el.submitBtn.disabled = true;
+      el.submitBtn.style.opacity = '0.6';
+      el.nextBtn.classList.remove('hidden');
+
+      updateSidebar();
+    }
+
+    function nextScenario() {
+      state.current += 1;
+      if (state.current >= scenarios.length) {
+        showResults();
+      } else {
+        renderScenario();
+      }
+    }
+
+    function showResults() {
+      el.gameView.classList.add('hidden');
+      el.resultsView.classList.remove('hidden');
+
+      const avg = Math.round(state.answers.reduce((sum, item) => sum + item.accuracy, 0) / state.answers.length);
+      const closeCount = state.answers.filter(item => Math.abs(item.user - item.expert) <= 2).length;
+
+      el.finalAccuracy.textContent = `${avg}%`;
+      el.finalCloseCount.textContent = `${closeCount} / ${scenarios.length}`;
+      renderReview();
+    }
+
+    function renderReview() {
+      el.reviewList.innerHTML = '';
+      state.answers.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'review-item';
+        div.innerHTML = `
+          <div class="review-head">
+            <strong>Scenario ${idx + 1}: ${item.title}</strong>
+            <span class="review-score">You: ${item.user}/10 | Expert: ${item.expert}/10</span>
+          </div>
+          <div class="review-body">
+            <p style="margin-top:0;"><strong>Scenario:</strong> ${item.text}</p>
+            <p><strong>Your reflection:</strong> ${item.reason ? item.reason : '<em>No reflection written.</em>'}</p>
+            <p><strong>How to improve:</strong> ${item.scenario.improve}</p>
+          </div>
+        `;
+        el.reviewList.appendChild(div);
+      });
+    }
+
+    function toggleReview() {
+      state.reviewOpen = !state.reviewOpen;
+      el.reviewSection.classList.toggle('hidden', !state.reviewOpen);
+      el.reviewToggleBtn.textContent = state.reviewOpen ? 'Hide Scenario Review' : 'Show Scenario Review';
+    }
+
+    function restartGame() {
+      state.current = 0;
+      state.answers = [];
+      state.reviewOpen = false;
+      el.reviewSection.classList.add('hidden');
+      el.reviewToggleBtn.textContent = 'Show Scenario Review';
+      document.getElementById('finalReflection').value = '';
+      el.resultsView.classList.add('hidden');
+      el.gameView.classList.remove('hidden');
+      renderScenario();
+    }
+
+    el.ratingSlider.addEventListener('input', (e) => {
+      el.ratingValue.textContent = e.target.value;
+    });
+
+    el.submitBtn.addEventListener('click', submitRating);
+    el.nextBtn.addEventListener('click', nextScenario);
+    el.reviewToggleBtn.addEventListener('click', toggleReview);
+    el.restartBtn.addEventListener('click', restartGame);
+
+    renderScenario();
+  </script>
 </body>
 </html>
